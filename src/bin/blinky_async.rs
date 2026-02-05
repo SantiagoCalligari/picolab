@@ -5,22 +5,33 @@ use defmt::*;
 use embassy_executor::Spawner;
 use embassy_rp::Peri;
 use embassy_rp::gpio;
-use embassy_time::Timer;
+use embassy_time::Duration;
+use embassy_time::{Ticker, Timer};
 use gpio::{AnyPin, Level, Output};
 use {defmt_rtt as _, panic_probe as _};
 
-#[embassy_executor::main]
-async fn main(_spawner: Spawner) {
-    let p = embassy_rp::init(Default::default());
-    let mut led = Output::new(p.PIN_25, Level::Low);
-
+#[embassy_executor::task]
+async fn blink(pin: Peri<'static, AnyPin>) {
+    let mut led = Output::new(pin, Level::Low);
+    let mut ticker = Ticker::every(Duration::from_secs(1));
     loop {
-        info!("led on!");
-        led.set_high();
-        Timer::after_secs(1).await;
+        led.toggle();
+        info!("LED set {} ", led.get_output_level());
 
-        info!("led off!");
-        led.set_low();
-        Timer::after_secs(1).await;
+        ticker.next().await;
+    }
+}
+
+#[embassy_executor::main]
+async fn main(spawner: Spawner) {
+    let p = embassy_rp::init(Default::default());
+
+    spawner.spawn(blink(p.PIN_25.into())).unwrap();
+
+    let mut counter = 0;
+    loop {
+        counter = counter + 1;
+        info!("Ran {} times asynchronously", counter);
+        Timer::after_millis(500).await;
     }
 }
