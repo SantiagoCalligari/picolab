@@ -12,6 +12,13 @@ defmt-rtt = "1.0.0"
 panic-probe = { version = "1.0.0", features = ["print-defmt"] }
 cortex-m = { version = "0.7.6", features = ["inline-asm"] }
 cortex-m-rt = "0.7.0"
+mousefood = { version = "0.3.0", default-features = true }
+ratatui = { version = "0.30", default-features = false, features = ["portable-atomic"] }
+ssd1306 = { version = "0.10.0", features = ["async"] }
+
+portable-atomic = { version = "1.13.1", features = ["critical-section"] }
+embedded-alloc = "0.7"  
+embedded-graphics = "0.8.1"
 
 [profile.release]
 debug = true
