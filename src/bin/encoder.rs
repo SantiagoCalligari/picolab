@@ -7,6 +7,7 @@ use embassy_rp::bind_interrupts;
 use embassy_rp::pio::{InterruptHandler, Pio};
 use embassy_rp::pio_programs::rotary_encoder::{Direction, PioEncoder, PioEncoderProgram};
 use embassy_rp::peripherals::PIO0;
+use {defmt_rtt as _, panic_probe as _};
 
 bind_interrupts!( struct Irqs { 
     PIO0_IRQ_0 => InterruptHandler<PIO0>;
